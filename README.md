@@ -177,6 +177,3 @@ It schedules voice conversations with the person being cared for, runs them via 
 
 MIT License – See LICENSE file for details.
 
----
-
-Do you want me to go ahead and also create **an architecture diagram** for this README so it’s visually clear how the device, app, backend, and OpenAI Realtime API fit together? That would make it much easier for devs to grasp the flow at a glance.
