@@ -3,6 +3,15 @@
 ElderCare Voice Companion is a Raspberry Pi–powered, AI-driven check-in system designed for remote caregivers.
 It schedules voice conversations with the person being cared for, runs them via the OpenAI Realtime API, captures transcripts, generates summaries, and stores them in Firebase so caregivers can see how their loved one is doing — from anywhere in the world.
 
+
+## Repository Structure
+
+- device/ — Raspberry Pi device agent (Python)
+- mobile-android/ — Android mobile app
+- functions/ — Firebase Cloud Functions
+- infra/ — Infrastructure as code
+- docs/ — Documentation
+
 ---
 
 ## Features
