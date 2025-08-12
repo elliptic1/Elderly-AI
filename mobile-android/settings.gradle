@@ -1,0 +1,3 @@
+
+rootProject.name = "Elderly-AI"
+include ':app'

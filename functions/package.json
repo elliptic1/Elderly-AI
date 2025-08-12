@@ -2,7 +2,20 @@
   "name": "functions",
   "version": "0.1.0",
   "private": true,
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"No tests yet\""
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "test": "mocha --reporter spec"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.11.1",
+    "firebase-functions": "^4.9.0"
+  },
+  "devDependencies": {
+    "mocha": "^10.4.0"
   }
 }

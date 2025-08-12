@@ -1,1 +1,6 @@
-# Placeholder requirements
+bleak
+pyaudio
+websockets
+apscheduler
+structlog
+google-cloud-firestore
