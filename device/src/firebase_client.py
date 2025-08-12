@@ -3,6 +3,8 @@ import structlog
 import firebase_admin
 from firebase_admin import credentials, firestore
 
+from .models import Schedule
+
 logger = structlog.get_logger()
 
 def initialize_firebase():
@@ -23,16 +25,18 @@ def initialize_firebase():
         return False
 
 def listen_for_schedules(callback):
+    """Listens for changes to schedules in Firestore.
+
+    A real implementation would attach a snapshot listener and construct
+    :class:`Schedule` objects from Firestore documents. For now a single
+    ``Schedule`` instance is synthesised and ``callback`` is invoked with
+    it to simulate behaviour.
     """
-    Listens for changes to the schedules in Firestore.
-    This is a placeholder implementation.
-    """
+
     logger.info("Listening for schedule changes...")
-    # In a real implementation, you would use a Firestore snapshot listener.
-    # For now, we'll just call the callback with a dummy schedule.
-    dummy_schedule = {
-        "id": "daily_checkin",
-        "cron": "0 9 * * *",
-        "promptVariant": "daily_checkin_v1"
-    }
+    dummy_schedule = Schedule(
+        id="daily_checkin",
+        cron="0 9 * * *",
+        prompt_variant="daily_checkin_v1",
+    )
     callback(dummy_schedule)
