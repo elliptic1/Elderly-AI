@@ -6,6 +6,8 @@ from bleak import BleakServer
 from bleak.backends.characteristic import BleakGATTCharacteristic
 from bleak.backends.service import BleakGATTService
 
+from .models import OnboardingState
+
 logger = structlog.get_logger()
 
 ONBOARDING_SERVICE_UUID = "0000FFF0-0000-1000-8000-00805F9B34FB"
@@ -14,16 +16,6 @@ PSK_CHAR_UUID = "0000FFF2-0000-1000-8000-00805F9B34FB"
 TIMEZONE_CHAR_UUID = "0000FFF3-0000-1000-8000-00805F9B34FB"
 CLAIM_TOKEN_CHAR_UUID = "0000FFF4-0000-1000-8000-00805F9B34FB"
 STATUS_CHAR_UUID = "0000FFF5-0000-1000-8000-00805F9B34FB"
-
-class OnboardingState:
-    def __init__(self):
-        self.ssid = None
-        self.psk = None
-        self.timezone = None
-        self.claim_token = None
-
-    def is_complete(self):
-        return all([self.ssid, self.psk, self.timezone, self.claim_token])
 
 state = OnboardingState()
 
