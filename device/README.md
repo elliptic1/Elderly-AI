@@ -8,6 +8,12 @@ The `src/voice_chat.py` example opens a realtime voice chat with the OpenAI
 API using the system's microphone and speaker.  It injects example side
 prompts at start and once every minute to steer the conversation.
 
+PyAudio requires the system PortAudio library. On Debian/Ubuntu install it with:
+
+```bash
+sudo apt-get install portaudio19-dev
+```
+
 Run the demo with:
 
 ```bash
