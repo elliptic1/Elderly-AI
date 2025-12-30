@@ -1,0 +1,39 @@
+// Copyright 2024 ElderCare AI
+//
+// ElderCare System App - AI-powered voice companion for elderly users
+//
+// This app runs as a privileged system app to:
+// - Conduct scheduled voice check-ins via OpenAI Realtime API
+// - Sync schedules from Firebase
+// - Report session summaries to caregivers
+
+android_app {
+    name: "ElderCareApp",
+
+    srcs: ["src/**/*.java"],
+
+    resource_dirs: ["res"],
+
+    manifest: "AndroidManifest.xml",
+
+    // System app with elevated privileges
+    privileged: true,
+    platform_apis: true,
+    certificate: "platform",
+
+    static_libs: [
+        "androidx.appcompat_appcompat",
+        "androidx.core_core",
+        "com.google.android.material_material",
+    ],
+
+    optimize: {
+        enabled: true,
+        shrink: true,
+        proguard_flags_files: ["proguard-rules.pro"],
+    },
+
+    required: [
+        // Dependencies this app requires
+    ],
+}

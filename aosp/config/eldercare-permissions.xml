@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Pre-granted permissions for ElderCareApp
+
+  As a system app, ElderCareApp needs certain permissions granted
+  at install time without user interaction.
+-->
+<permissions>
+    <privapp-permissions package="com.eldercare.app">
+        <permission name="android.permission.RECORD_AUDIO" />
+        <permission name="android.permission.MODIFY_AUDIO_SETTINGS" />
+        <permission name="android.permission.FOREGROUND_SERVICE" />
+        <permission name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+        <permission name="android.permission.RECEIVE_BOOT_COMPLETED" />
+        <permission name="android.permission.WAKE_LOCK" />
+        <permission name="android.permission.SCHEDULE_EXACT_ALARM" />
+        <permission name="android.permission.USE_EXACT_ALARM" />
+        <permission name="android.permission.INTERNET" />
+        <permission name="android.permission.ACCESS_NETWORK_STATE" />
+    </privapp-permissions>
+</permissions>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.ElderCare" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <!-- Customize theme for elderly-friendly UI -->
+        <!-- Large text, high contrast, simple navigation -->
+    </style>
+</resources>

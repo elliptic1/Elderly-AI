@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Device overlay configuration for ElderCare on Panther
+
+  These values override framework defaults for ElderCare-specific behavior.
+-->
+<resources>
+    <!-- Keep screen on longer for elderly users -->
+    <integer name="config_screenBrightnessSettingDefault">200</integer>
+
+    <!-- Disable ambient display to save battery and reduce confusion -->
+    <bool name="config_dozeAlwaysOnDisplayAvailable">false</bool>
+
+    <!-- Increase touch slop for easier interaction -->
+    <dimen name="config_viewConfigurationTouchSlop">12dp</dimen>
+</resources>

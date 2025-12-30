@@ -1,0 +1,10 @@
+// Copyright 2024 ElderCare AI
+//
+// Top-level build file for ElderCare AOSP components
+//
+// This file is located at vendor/elderly-ai/aosp/Android.bp in the AOSP tree.
+
+// Subdirectories containing Android.bp files
+subdirs = [
+    "ElderCareApp",
+]

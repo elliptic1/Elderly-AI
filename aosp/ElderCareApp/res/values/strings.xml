@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ElderCare</string>
+    <string name="notification_channel_service">Check-in Active</string>
+    <string name="notification_channel_alerts">Alerts</string>
+    <string name="notification_checkin_active">Voice check-in in progress</string>
+    <string name="notification_checkin_complete">Check-in complete</string>
+    <string name="setup_title">ElderCare Setup</string>
+    <string name="setup_status_ready">Ready</string>
+    <string name="setup_status_connecting">Connecting...</string>
+</resources>
