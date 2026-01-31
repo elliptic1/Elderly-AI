@@ -58,15 +58,15 @@ For a more detailed look at the system architecture, see the [System Architectur
 
 The mobile app is still under development. You can find the source code in the `mobile-android` directory.
 
-## Remote Configuration
+## Remote Management
 
-The ElderCare system supports **remote configuration updates** via Firebase, allowing you to:
+### Configuration Updates
+
+Update device settings remotely via Firebase:
 - Update OpenAI API keys without physical device access
 - Add or modify check-in schedules remotely
 - Adjust device settings from the cloud
 - Monitor device status
-
-### Quick Start
 
 ```bash
 # Install admin tools
@@ -80,7 +80,29 @@ node push-config.js <deviceId> --api-key sk-proj-YOUR_KEY
 node push-config.js <deviceId> --schedule 09:00 --prompt "Morning check-in"
 ```
 
-**Full documentation:** See [admin/README.md](admin/README.md)
+**📖 Full documentation:** [admin/README.md](admin/README.md)
+
+### OTA System Updates
+
+Deploy new AOSP builds remotely with automatic updates:
+- Build new system images
+- Push updates to Firestore
+- Devices auto-download, verify, and apply
+- Zero-downtime A/B updates with automatic rollback
+
+```bash
+# Build OTA package
+cd aosp/
+./build-ota.sh v1.0.1
+
+# Publish update (uploads to Firebase Storage)
+cd ../admin/
+node push-ota.js --file ../aosp/ota-packages/eldercare-ota-v1.0.1.zip --upload
+```
+
+Devices check every 6 hours and apply updates automatically.
+
+**📖 Full documentation:** [OTA_UPDATES.md](OTA_UPDATES.md)
 
 ## Contributing
 

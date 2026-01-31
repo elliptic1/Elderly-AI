@@ -34,6 +34,10 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
+    <!-- OTA updates -->
+    <uses-permission android:name="android.permission.REBOOT" />
+    <uses-permission android:name="android.permission.ACCESS_CACHE_FILESYSTEM" />
+
     <application
         android:name=".ElderCareApplication"
         android:label="@string/app_name"
@@ -51,6 +55,12 @@
         <!-- Remote config service syncs settings from Firebase -->
         <service
             android:name=".config.RemoteConfigService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- OTA update service manages system software updates -->
+        <service
+            android:name=".update.OTAUpdateService"
             android:enabled="true"
             android:exported="false" />
 

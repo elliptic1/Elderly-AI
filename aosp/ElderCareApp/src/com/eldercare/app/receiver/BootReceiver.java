@@ -70,5 +70,15 @@ public class BootReceiver extends BroadcastReceiver {
         } catch (Exception e) {
             Log.e(TAG, "Failed to start remote config service", e);
         }
+        
+        // Also start OTA update service
+        try {
+            Intent updateIntent = new Intent(context,
+                com.eldercare.app.update.OTAUpdateService.class);
+            context.startService(updateIntent);
+            Log.i(TAG, "OTA update service started");
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to start OTA update service", e);
+        }
     }
 }
