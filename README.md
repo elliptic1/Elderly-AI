@@ -1,6 +1,6 @@
 # ElderCare AI Voice Companion
 
-**An AI-powered voice check-in system for elderly care**
+**An AI-powered voice check-in system for elderly care running on Raspberry Pi**
 
 ElderCare conducts natural voice conversations with elderly individuals on a schedule, analyzes the interactions for concerning content, and alerts caregivers when help is needed.
 
@@ -19,45 +19,44 @@ ElderCare conducts natural voice conversations with elderly individuals on a sch
 
 ## 🏗️ System Overview
 
-**Device:** Custom AOSP (Android 15) running on Google Pixel 7 Pro
+**Device:** Raspberry Pi 4 (or newer) with speaker and microphone
 
 **Key Features:**
-- Boots directly to check-in interface (animated smiley face)
-- System-level app with platform privileges
+- Python-based voice agent running as systemd service
 - Remote configuration via Firebase Firestore
-- Over-the-air (OTA) system updates
+- Automatic software updates via git pull
 - Zero-touch remote management
+- Simple, cost-effective deployment (~$50/device)
 
 **Tech Stack:**
-- AOSP 15 (Android Open Source Project)
+- Python 3.9+ (async/await for WebSocket)
 - OpenAI Realtime API (GPT-4o voice mode)
 - Firebase (Firestore, Storage, Cloud Functions)
-- Node.js admin tools
-- A/B seamless OTA updates
+- systemd (service management)
+- PortAudio/PyAudio (audio I/O)
 
 ## 📋 Quick Start
 
 ### Prerequisites
 
-- Google Pixel 7 or Pixel 7 Pro
-- Linux machine (Ubuntu 20.04+, 16GB RAM, 300GB disk)
+- Raspberry Pi 4 (2GB+ RAM recommended)
+- USB microphone or HAT with mic
+- Speaker (USB, 3.5mm, or HDMI audio)
+- SD card (16GB+)
 - Firebase project
 - OpenAI API key
 
 ### Setup (High-Level)
 
-1. **Build AOSP with ElderCare customization**
+1. **Flash Raspberry Pi OS Lite**
    ```bash
-   cd ~/aosp-panther
-   source build/envsetup.sh
-   lunch eldercare_panther-userdebug
-   m -j$(nproc)
+   # Use Raspberry Pi Imager
+   # Select: Raspberry Pi OS Lite (64-bit)
    ```
 
-2. **Flash device**
+2. **Run setup script**
    ```bash
-   adb reboot bootloader
-   fastboot flashall -w
+   curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/Elderly-AI/main/device/install.sh | bash
    ```
 
 3. **Configure remotely**
@@ -68,33 +67,38 @@ ElderCare conducts natural voice conversations with elderly individuals on a sch
    ```
 
 4. **Deploy**  
-   Device runs autonomously. Update remotely via OTA.
+   Device runs autonomously. Update remotely via config.
 
-**📖 Full setup guide:** [SETUP.md](SETUP.md)
+**📖 Full setup guide:** [docs/PI_SETUP.md](docs/PI_SETUP.md)
 
 ## 🗂️ Documentation
 
 ### Essential Guides
 
-- **[SETUP.md](SETUP.md)** - Complete setup from scratch (AOSP build, flash, configure)
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design, components, data flow
+- **[docs/PI_SETUP.md](docs/PI_SETUP.md)** - Complete Pi setup from scratch
+- **[docs/PI_ARCHITECTURE.md](docs/PI_ARCHITECTURE.md)** - System design for Pi
 - **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Command cheat sheet
 
 ### Remote Management
 
-- **[REMOTE_CONFIG.md](REMOTE_CONFIG.md)** - Remote configuration system (API keys, schedules, settings)
-- **[OTA_UPDATES.md](OTA_UPDATES.md)** - Over-the-air system updates (build, deploy, monitor)
-- **[admin/README.md](admin/README.md)** - Admin CLI tools guide
+- **[REMOTE_CONFIG.md](REMOTE_CONFIG.md)** - Remote configuration (API keys, schedules)
+- **[docs/PI_UPDATES.md](docs/PI_UPDATES.md)** - Software updates (git-based)
+- **[admin/README.md](admin/README.md)** - Admin CLI tools
 
-### Troubleshooting
+### Development
 
-- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Comprehensive troubleshooting guide
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Developer guide
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Problem solving
+
+### Alternative Implementations
+
+- **[docs/AOSP_IMPLEMENTATION.md](docs/AOSP_IMPLEMENTATION.md)** - Android/Pixel 7 version (archived)
 
 ## 🔧 Remote Management
 
 ### Configuration Updates
 
-Update device settings remotely without physical access:
+Update device settings remotely:
 
 ```bash
 # Update OpenAI API key
@@ -107,30 +111,21 @@ node push-config.js <deviceId> --schedule 13:00 --prompt "Afternoon check-in"
 node push-config.js <deviceId> --config device-config.json
 ```
 
-**How it works:**
-- Device polls Firestore every 15 minutes
-- Changes applied automatically
-- No device restart needed (for most changes)
+Devices poll Firestore every 15 minutes and apply changes automatically.
 
-### System Updates (OTA)
+### Software Updates
 
-Deploy new AOSP builds remotely with zero-touch updates:
+Deploy code updates remotely:
 
 ```bash
-# Build OTA package
-cd aosp/
-./build-ota.sh v1.0.1
+# Update all devices to latest code
+node update-devices.js --all
 
-# Deploy to all devices
-cd ../admin/
-node push-ota.js --file ../aosp/ota-packages/eldercare-ota-v1.0.1.zip --upload
+# Or target specific device
+node update-devices.js --device <deviceId>
 ```
 
-**How it works:**
-- Devices check for updates every 6 hours
-- Auto-download, verify (SHA-256), and apply
-- A/B seamless update (zero downtime)
-- Automatic rollback if new system fails to boot
+Devices automatically pull latest code from git and restart service.
 
 ## 🏛️ Architecture
 
@@ -138,67 +133,55 @@ node push-ota.js --file ../aosp/ota-packages/eldercare-ota-v1.0.1.zip --upload
 ┌─────────────────────────┐
 │  Firebase (Cloud)       │
 │  - Firestore (config)   │
-│  - Storage (OTA pkgs)   │
 │  - Functions (alerts)   │
 └────────────┬────────────┘
              │ HTTPS
              ▼
 ┌─────────────────────────┐
-│  Pixel 7 (Device)       │
+│  Raspberry Pi           │
 │  ┌─────────────────────┐│
-│  │ AOSP 15 Custom ROM  ││
+│  │ Raspberry Pi OS     ││
 │  │                     ││
-│  │ ElderCareApp        ││
+│  │ eldercare-agent.py  ││
 │  │ - Check-in Service  ││
 │  │ - Remote Config     ││
-│  │ - OTA Updates       ││
+│  │ - Auto Updates      ││
 │  │ - Audio I/O         ││
 │  └─────────────────────┘│
 └────────────┬────────────┘
-             │ WebSocket (WSS)
+             │ WebSocket
              ▼
 ┌─────────────────────────┐
 │  OpenAI Realtime API    │
 │  - GPT-4o voice mode    │
-│  - Real-time streaming  │
-│  - Server VAD           │
 └─────────────────────────┘
 ```
-
-**See [ARCHITECTURE.md](ARCHITECTURE.md) for complete design**
 
 ## 📱 Project Structure
 
 ```
 Elderly-AI/
-├── aosp/                          # AOSP customization
-│   ├── ElderCareApp/              # Main system app
-│   │   ├── src/com/eldercare/app/
-│   │   │   ├── service/           # Check-in service
-│   │   │   ├── config/            # Remote config
-│   │   │   ├── update/            # OTA updates
-│   │   │   ├── realtime/          # OpenAI client
-│   │   │   ├── audio/             # Audio I/O
-│   │   │   ├── analysis/          # Session analysis
-│   │   │   └── ui/                # User interface
-│   │   ├── res/                   # Resources (layouts, assets)
-│   │   └── AndroidManifest.xml
-│   ├── products/                  # Device configurations
-│   └── build-ota.sh               # OTA package builder
+├── device/                        # Raspberry Pi device code
+│   ├── eldercare_agent.py         # Main voice agent
+│   ├── openai_realtime.py         # OpenAI WebSocket client
+│   ├── audio_manager.py           # Audio I/O
+│   ├── config_manager.py          # Remote config sync
+│   ├── session_analyzer.py        # Concern detection
+│   ├── install.sh                 # Device setup script
+│   ├── eldercare.service          # systemd service
+│   └── requirements.txt           # Python dependencies
 ├── admin/                         # Admin CLI tools
 │   ├── push-config.js             # Config management
-│   ├── push-ota.js                # OTA deployment
-│   ├── setup.sh                   # Setup script
+│   ├── update-devices.js          # Software updates
 │   └── package.json
 ├── mobile-android/                # Caregiver mobile app (TODO)
 ├── functions/                     # Firebase Cloud Functions
-├── docs/                          # Additional documentation
-├── SETUP.md                       # Setup guide
-├── ARCHITECTURE.md                # System architecture
-├── REMOTE_CONFIG.md               # Config system docs
-├── OTA_UPDATES.md                 # OTA system docs
-├── TROUBLESHOOTING.md             # Troubleshooting guide
-├── QUICK_REFERENCE.md             # Command cheat sheet
+├── docs/                          # Documentation
+│   ├── PI_SETUP.md                # Pi setup guide
+│   ├── PI_ARCHITECTURE.md         # Pi architecture
+│   ├── PI_UPDATES.md              # Update system
+│   └── AOSP_IMPLEMENTATION.md     # Android version (archived)
+├── aosp/                          # AOSP implementation (archived)
 └── README.md                      # This file
 ```
 
@@ -206,156 +189,134 @@ Elderly-AI/
 
 ### Voice Conversations
 
-- **Low-latency streaming** - Real-time bidirectional audio (300-800ms response)
-- **Natural speech** - GPT-4o voice mode (sounds human)
+- **Low-latency streaming** - Real-time bidirectional audio (~500ms response)
+- **Natural speech** - GPT-4o voice mode
 - **Context-aware** - Remembers conversation flow
 - **Server-side VAD** - Automatic turn detection
 - **Transcription** - Both user and AI speech logged
 
 ### Session Analysis
 
-- **Quick analysis** - Local keyword detection (<2s)
-- **Deep analysis** - GPT-4 background analysis for nuance
-- **Concern detection:**
-  - Falls or injuries
-  - Pain or medical issues
-  - Requests for help
-  - Emergencies (chest pain, bleeding, etc.)
-  - Emotional distress
+- **Quick analysis** - Local keyword detection
+- **Deep analysis** - GPT-4 background analysis
+- **Concern detection** - Falls, pain, emergencies, distress
 
 ### Alerts
 
-- **Caregiver notifications** - Via Firebase Cloud Functions + FCM
+- **Caregiver notifications** - Via Firebase + FCM
 - **Urgency levels** - 1-5 scale based on severity
 - **Session transcripts** - Full conversation included
-- **Quick summary** - AI-generated summary of concern
 
 ### Device Management
 
-- **Zero-touch config** - Remote API key, schedule, settings updates
-- **OTA system updates** - Deploy new builds remotely
-- **Status monitoring** - Device reports health to Firestore
-- **Automatic recovery** - Rollback on failed updates
+- **Zero-touch config** - Remote updates via Firestore
+- **Automatic updates** - Git pull on schedule
+- **Status monitoring** - Device health reports
+- **Simple deployment** - One script install
+
+## 💰 Cost
+
+**Per device:**
+- Raspberry Pi 4 (2GB): ~$35
+- USB microphone: ~$10
+- Powered speaker: ~$15
+- SD card (16GB): ~$8
+- Power supply: ~$8
+- **Total: ~$75**
+
+**Operating costs (100 devices):**
+- Firebase: <$1/month (free tier covers it)
+- OpenAI API: $0.06/min × ~5 min/check-in × 2 check-ins/day = ~$9/device/month
+
+**Total TCO:** ~$75 upfront + ~$9/month/device
 
 ## 🛡️ Security
 
-### Device Security
-
-- **Verified boot** - Bootloader, boot image, system partition all signed
-- **Locked bootloader** - Prevents unauthorized flashing (production)
-- **System privileges** - App runs with platform certificate
-- **App sandboxing** - Session data isolated from other apps
-
-### Network Security
-
 - **TLS 1.3** - All network communications encrypted
-- **WSS (WebSocket Secure)** - OpenAI Realtime API
-- **HTTPS only** - Firebase, Firestore, Storage
-
-### Data Privacy
-
-- **Local storage** - Transcripts stored only on device (optional cloud backup)
-- **Encrypted at rest** - Firestore data encrypted by Google
-- **Minimal data** - Only session summaries sent to cloud by default
-- **API key encryption** - TODO: Use Android Keystore
+- **SSH keys** - Secure remote access
+- **API key encryption** - Stored in encrypted config
+- **Automatic updates** - Security patches via git
+- **Firestore rules** - Device access control
 
 ## 📊 Performance
 
-### Latency
-
-- Check-in trigger → audio: **<5s**
-- User speech → AI response: **300-800ms**
-- Session analysis: **<2s** (quick), 5-10s (deep)
-- Config sync: **<1s**
-- OTA check: **<5s**
-- OTA download: **~10-15 min** (800MB package, 1Mbps)
-- OTA apply: **~3-5 min**
-
-### Resource Usage
-
-- **Memory:** 50MB (idle), 150MB (active session), 200MB (OTA)
-- **Storage:** 10MB (app), 50-100MB/month (logs)
-- **Network:** 5-10MB per check-in, <1KB config checks, 800MB per OTA
-
-### Cost (Firebase)
-
-100 devices monthly:
-- Firestore: Free tier
-- Storage: ~$0.50
-- Functions: Free tier
-- **Total: <$1/month**
+- Check-in trigger → audio: <10s
+- User speech → AI response: 500-800ms
+- Session analysis: <5s
+- Config sync: <2s
+- Software update: ~1 min
 
 ## 🗺️ Roadmap
 
-### v1.1 (Next Release)
+### v1.0 (Current)
 
-- [ ] Caregiver mobile app (Android)
-- [ ] Web dashboard for multi-device management
-- [ ] Device authentication (Firebase Auth)
-- [ ] Encrypted config fields
-- [ ] Incremental OTA updates
+- [x] Python voice agent
+- [x] OpenAI Realtime API integration
+- [x] Remote configuration
+- [x] Automatic updates
+- [x] Session analysis
+- [ ] Caregiver alerts (in progress)
 
-### v1.2
+### v1.1 (Next)
 
-- [ ] Gradual rollout (staged OTA deployments)
+- [ ] Caregiver mobile app
+- [ ] Web dashboard
 - [ ] Multi-language support
-- [ ] Custom wake word detection
+- [ ] Custom wake word
+
+### v2.0 (Future)
+
+- [ ] Video check-ins (Pi Camera)
+- [ ] Fall detection (sensors)
 - [ ] Medication reminders
-
-### v2.0
-
-- [ ] Video check-ins (camera)
-- [ ] Fall detection (accelerometer + ML)
-- [ ] Integration with medical devices
-- [ ] Natural conversation mode (no fixed schedules)
-
-### Under Consideration
-
-- [ ] Raspberry Pi version (lower cost alternative)
-- [ ] Local LLM fallback (offline mode)
-- [ ] Emergency button (hardware)
-- [ ] Smart home integration
+- [ ] Health device integration
 
 ## 🤝 Contributing
 
-Contributions welcome! Please:
-
-1. Read [ARCHITECTURE.md](ARCHITECTURE.md) to understand the system
-2. Check existing issues for planned work
-3. Open an issue to discuss major changes
-4. Follow existing code style
-5. Test thoroughly before submitting PR
-
-**Development setup:** See [SETUP.md](SETUP.md)
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **AOSP** - Android Open Source Project
-- **OpenAI** - Realtime API and GPT-4o voice mode
-- **Firebase** - Cloud infrastructure
-- **Google** - Pixel device support
-
-## 📞 Support
-
-- **Documentation:** See docs in this repo
-- **Issues:** [GitHub Issues](https://github.com/YOUR_USERNAME/Elderly-AI/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/YOUR_USERNAME/Elderly-AI/discussions)
+MIT License - see [LICENSE](LICENSE)
 
 ## 🔗 Links
 
 - [Firebase Console](https://console.firebase.google.com)
 - [OpenAI Platform](https://platform.openai.com)
-- [AOSP Source](https://source.android.com)
-- [Pixel Factory Images](https://developers.google.com/android/images)
+- [Raspberry Pi](https://www.raspberrypi.com/)
+
+## 💡 Why Raspberry Pi?
+
+**vs. AOSP/Android:**
+- ✅ Simpler development (Python vs Java/AOSP)
+- ✅ Faster iteration (no AOSP build, ~2 min vs 2 hours)
+- ✅ Lower cost ($75 vs $400+ for Pixel)
+- ✅ Standard Linux (easier to debug)
+- ✅ More flexible hardware (GPIO, HATs, cameras)
+
+**vs. Commercial tablets:**
+- ✅ No distractions (dedicated device)
+- ✅ Can't be "escaped" from kiosk mode
+- ✅ Easier remote management
+- ✅ Lower cost
+
+**Trade-offs:**
+- ⚠️ No A/B updates (but git rollback is simple)
+- ⚠️ No verified boot (but read-only root possible)
+- ⚠️ Requires external speaker/mic (vs integrated)
+
+## 📞 Support
+
+- **Documentation:** See docs/ directory
+- **Issues:** [GitHub Issues](https://github.com/YOUR_USERNAME/Elderly-AI/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/YOUR_USERNAME/Elderly-AI/discussions)
 
 ---
 
 **Built with ❤️ for elder care**
 
-**Status:** Production-ready  
+**Platform:** Raspberry Pi  
 **Version:** 1.0.0  
 **Last Updated:** 2024-01-31
+
+**Note:** An AOSP/Android implementation is also available in the `archive/aosp-implementation` branch. See [docs/AOSP_IMPLEMENTATION.md](docs/AOSP_IMPLEMENTATION.md) for details.
