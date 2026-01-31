@@ -7,6 +7,9 @@
 // - Sync schedules from Firebase
 // - Report session summaries to caregivers
 
+soong_namespace {
+}
+
 android_app {
     name: "ElderCareApp",
 
@@ -21,19 +24,9 @@ android_app {
     platform_apis: true,
     certificate: "platform",
 
-    static_libs: [
-        "androidx.appcompat_appcompat",
-        "androidx.core_core",
-        "com.google.android.material_material",
-    ],
-
     optimize: {
-        enabled: true,
-        shrink: true,
-        proguard_flags_files: ["proguard-rules.pro"],
+        enabled: false,
     },
 
-    required: [
-        // Dependencies this app requires
-    ],
+    required: [],
 }

@@ -10,5 +10,5 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/products/eldercare_panther.mk
 
 COMMON_LUNCH_CHOICES := \
-    eldercare_panther-userdebug \
-    eldercare_panther-user
+    eldercare_panther-trunk_staging-userdebug \
+    eldercare_panther-trunk_staging-user

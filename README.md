@@ -58,6 +58,30 @@ For a more detailed look at the system architecture, see the [System Architectur
 
 The mobile app is still under development. You can find the source code in the `mobile-android` directory.
 
+## Remote Configuration
+
+The ElderCare system supports **remote configuration updates** via Firebase, allowing you to:
+- Update OpenAI API keys without physical device access
+- Add or modify check-in schedules remotely
+- Adjust device settings from the cloud
+- Monitor device status
+
+### Quick Start
+
+```bash
+# Install admin tools
+cd admin/
+./setup.sh
+
+# Update API key on a device
+node push-config.js <deviceId> --api-key sk-proj-YOUR_KEY
+
+# Add a check-in schedule
+node push-config.js <deviceId> --schedule 09:00 --prompt "Morning check-in"
+```
+
+**Full documentation:** See [admin/README.md](admin/README.md)
+
 ## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for more details.

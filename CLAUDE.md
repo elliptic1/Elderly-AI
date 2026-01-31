@@ -62,11 +62,64 @@ aosp/
 ├── ElderCareApp/           # System app source
 │   ├── Android.bp          # Build file
 │   ├── AndroidManifest.xml # Manifest with system permissions
+│   ├── res/                # Resources (layouts, strings, colors)
 │   └── src/                # Java source
+│       └── com/eldercare/app/
+│           ├── ElderCareApplication.java  # App initialization
+│           ├── analysis/
+│           │   └── SessionAnalyzer.java   # Conversation analysis
+│           ├── audio/
+│           │   └── VoiceAudioManager.java # Mic/speaker handling
+│           ├── realtime/
+│           │   └── OpenAIRealtimeClient.java # WebSocket API client
+│           ├── receiver/
+│           │   ├── BootReceiver.java      # Boot initialization
+│           │   └── ScheduleReceiver.java  # Alarm handling
+│           ├── schedule/
+│           │   └── ScheduleManager.java   # Alarm scheduling
+│           ├── service/
+│           │   └── ElderCareService.java  # Foreground service
+│           └── ui/
+│               ├── CheckInActivity.java   # Smiley face UI
+│               ├── SetupActivity.java     # Configuration UI
+│               └── SmileyView.java        # Custom smiley view
 ├── config/                 # System configuration
 ├── device-overlay/panther/ # Device-specific overlays
 └── products/               # Product makefiles
 ```
+
+### AOSP App Architecture
+
+The app consists of these key components:
+
+1. **CheckInActivity** - Fullscreen UI with animated smiley face
+   - Pulses when listening, shows status text
+   - Launched by service when check-in triggers
+
+2. **ElderCareService** - Foreground service managing voice sessions
+   - Coordinates OpenAI API and audio
+   - Handles session timeouts (3 min max, 20s silence)
+   - Logs sessions to `/data/data/com.eldercare.app/files/sessions/`
+   - Triggers SessionAnalyzer for conversation classification
+
+3. **OpenAIRealtimeClient** - WebSocket client for OpenAI Realtime API
+   - Connects to `wss://api.openai.com/v1/realtime`
+   - Streams 16kHz PCM audio bidirectionally
+   - Configured with eldercare-specific system prompt
+
+4. **VoiceAudioManager** - Android audio capture/playback
+   - AudioRecord for mic input, AudioTrack for speaker
+   - Sets volume to max during sessions
+
+5. **ScheduleManager** - Check-in scheduling with AlarmManager
+   - Default schedules: 9 AM, 1 PM, 6 PM
+   - Stores API key and schedules in SharedPreferences
+
+6. **SessionAnalyzer** - Classifies conversation outcomes
+   - Quick local keyword analysis (immediate)
+   - Deep API analysis (background)
+   - Actions: NONE, CONTINUE, ALERT_CAREGIVER
+   - Urgency levels 1-5
 
 ## Common Commands
 

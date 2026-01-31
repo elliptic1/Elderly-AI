@@ -48,6 +48,12 @@
             android:exported="false"
             android:foregroundServiceType="microphone" />
 
+        <!-- Remote config service syncs settings from Firebase -->
+        <service
+            android:name=".config.RemoteConfigService"
+            android:enabled="true"
+            android:exported="false" />
+
         <!-- Boot receiver to start service on device boot -->
         <receiver
             android:name=".receiver.BootReceiver"
@@ -66,16 +72,27 @@
             android:enabled="true"
             android:exported="false" />
 
-        <!-- Optional: Minimal settings activity for device setup -->
+        <!-- Main check-in activity (fullscreen smiley face) -->
         <activity
-            android:name=".ui.SetupActivity"
+            android:name=".ui.CheckInActivity"
             android:exported="true"
-            android:theme="@style/Theme.ElderCare">
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.ElderCare"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <!-- Settings activity for device setup (hidden from launcher) -->
+        <activity
+            android:name=".ui.SetupActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ElderCare" />
 
     </application>
 

@@ -3,24 +3,32 @@
  *
  * ElderCare Application - Main application class
  *
- * Initializes Firebase, scheduling, and other app-wide components.
+ * Initializes scheduling, notifications, and other app-wide components.
  */
 package com.eldercare.app;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.util.Log;
+
+import com.eldercare.app.schedule.ScheduleManager;
 
 /**
  * Main application class for ElderCare.
  *
  * Responsibilities:
- * - Initialize Firebase connection
- * - Set up notification channels
- * - Initialize audio subsystem
+ * - Initialize notification channels
+ * - Set up default schedules
+ * - Initialize scheduling system
  */
 public class ElderCareApplication extends Application {
 
     private static final String TAG = "ElderCareApp";
+
+    // Notification channel IDs
+    public static final String CHANNEL_SERVICE = "eldercare_service";
+    public static final String CHANNEL_ALERTS = "eldercare_alerts";
 
     @Override
     public void onCreate() {
@@ -28,22 +36,56 @@ public class ElderCareApplication extends Application {
         Log.i(TAG, "ElderCare Application starting...");
 
         initializeNotificationChannels();
-        initializeFirebase();
+        initializeScheduling();
 
         Log.i(TAG, "ElderCare Application initialized");
     }
 
     private void initializeNotificationChannels() {
-        // TODO: Create notification channels for:
-        // - Foreground service (ongoing check-in)
-        // - Alerts (missed check-ins, emergencies)
-        // - General notifications
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (manager == null) {
+            Log.e(TAG, "NotificationManager not available");
+            return;
+        }
+
+        // Foreground service channel (low importance, for ongoing check-ins)
+        NotificationChannel serviceChannel = new NotificationChannel(
+            CHANNEL_SERVICE,
+            "Check-in Active",
+            NotificationManager.IMPORTANCE_LOW
+        );
+        serviceChannel.setDescription("Shown during voice check-in sessions");
+        serviceChannel.setShowBadge(false);
+        manager.createNotificationChannel(serviceChannel);
+
+        // Alerts channel (high importance, for emergencies and missed check-ins)
+        NotificationChannel alertsChannel = new NotificationChannel(
+            CHANNEL_ALERTS,
+            "Alerts",
+            NotificationManager.IMPORTANCE_HIGH
+        );
+        alertsChannel.setDescription("Important alerts requiring attention");
+        alertsChannel.setShowBadge(true);
+        alertsChannel.enableVibration(true);
+        manager.createNotificationChannel(alertsChannel);
+
+        Log.i(TAG, "Notification channels created");
     }
 
-    private void initializeFirebase() {
-        // TODO: Initialize Firebase for:
-        // - Firestore schedule sync
-        // - Cloud Messaging for push notifications
-        // - Analytics
+    private void initializeScheduling() {
+        try {
+            ScheduleManager scheduleManager = new ScheduleManager(this);
+
+            // Create default schedules if none exist
+            scheduleManager.initializeDefaultSchedules();
+
+            // Reschedule all alarms (in case app was updated or reinstalled)
+            scheduleManager.rescheduleAllAlarms();
+
+            Log.i(TAG, "Scheduling initialized");
+
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to initialize scheduling", e);
+        }
     }
 }

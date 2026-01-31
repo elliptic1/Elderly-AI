@@ -1,0 +1,13 @@
+# Sensitive files - DO NOT COMMIT
+service-account.json
+*-service-account.json
+
+# Device-specific configs
+device-*.json
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Logs
+*.log

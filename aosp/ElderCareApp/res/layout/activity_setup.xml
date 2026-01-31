@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Setup activity layout for configuring the ElderCare device.
+-->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ElderCare Setup"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Status -->
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status: Not configured"
+            android:textSize="16sp"
+            android:textColor="@color/status_text"
+            android:layout_marginBottom="24dp" />
+
+        <!-- API Key Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OpenAI API Key"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/api_key_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter your OpenAI API key"
+            android:inputType="textPassword"
+            android:padding="16dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/save_api_key_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save API Key"
+            android:enabled="false"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Test Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test Check-In"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Run a test check-in to verify the device is working correctly."
+            android:textSize="14sp"
+            android:textColor="@color/status_text"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/test_checkin_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Test Check-In"
+            android:enabled="false"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Schedules Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Schedules"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:id="@+id/schedules_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Loading schedules..."
+            android:textSize="14sp"
+            android:textColor="@color/status_text"
+            android:fontFamily="monospace"
+            android:padding="16dp"
+            android:background="#FFFFFF" />
+
+    </LinearLayout>
+</ScrollView>

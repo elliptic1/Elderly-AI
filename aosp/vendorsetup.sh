@@ -4,7 +4,6 @@
 #
 # Usage (from AOSP root):
 #   source build/envsetup.sh
-#   lunch eldercare_panther-userdebug
-
-add_lunch_combo eldercare_panther-userdebug
-add_lunch_combo eldercare_panther-user
+#   lunch eldercare_panther-trunk_staging-userdebug
+#
+# Note: Lunch combos are now defined in AndroidProducts.mk via COMMON_LUNCH_CHOICES

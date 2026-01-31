@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#FFFAF0</color>
+    <color name="smiley_yellow">#FFD93D</color>
+    <color name="smiley_outline">#333333</color>
+    <color name="status_text">#666666</color>
+    <color name="listening_indicator">#4CAF50</color>
+    <color name="error_indicator">#F44336</color>
+</resources>
